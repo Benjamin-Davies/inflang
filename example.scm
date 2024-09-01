@@ -17,4 +17,3 @@
         (lambda (en) (fazz-buzz en))))
 
 (main)
-(range)
