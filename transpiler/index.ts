@@ -1,11 +1,9 @@
 import fs from 'fs';
 
-import Scanner from './scanner';
+import parse from './parser';
 
 const filename = process.argv[2];
 const input = fs.readFileSync(filename, 'utf8');
-const scanner = new Scanner(input);
+const ast = parse(input);
 
-while (scanner.peek()) {
-  console.log(scanner.consume());
-}
+console.log(JSON.stringify(ast));

@@ -38,6 +38,8 @@ ydamo due
     ; add(m, n, o)
     add em, en, eo.
     em add en, eo.
+    em, en add eo.
+    em, en, eo add.
     ; sub(add(m, n), o)
     sab (add em, en), eo.
     em add en sab eo.
@@ -46,7 +48,7 @@ ydamo due
     nag em add en, eo.
     ; sub(neg(n), m)
     sab (nag en), em.
-    nag en sub em.
+    nag en sab em.
 dun.
 
 ; Pronunciation of new words (basic English rules):

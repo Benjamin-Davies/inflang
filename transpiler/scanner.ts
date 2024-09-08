@@ -46,6 +46,8 @@ const MATCHERS: [RawTokenType, RegExp][] = [
 
 const VOWEL_REGEX = /[aeiouy]/i;
 
+const DUN_KEYWORDS = ['dun', 'uluf', 'uls'];
+
 export default class Scanner {
   position = 0;
   nextToken: Token | null = null;
@@ -158,5 +160,22 @@ export default class Scanner {
     }
     this.nextToken = null;
     return token;
+  }
+
+  expect(type: TokenType, value?: string): Token {
+    const token = this.consume();
+    if (value !== undefined) {
+      if (token[0] !== type || token[1] !== value) {
+        throw new Error(`Expected ${[type, value]}, got ${token}`);
+      }
+    } else if (token[0] !== type) {
+      throw new Error(`Expected ${type}, got ${token}`);
+    }
+    return token;
+  }
+
+  isDun() {
+    const token = this.peek();
+    return !token || DUN_KEYWORDS.includes(token[1]);
   }
 }
