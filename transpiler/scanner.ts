@@ -126,6 +126,17 @@ export default class Scanner {
           }
           break;
         }
+        case 'string':
+          this.nextToken = ['string', value.slice(1, -1)];
+          break;
+        case 'number':
+          if (parseInt(value, 10) <= 100) {
+            throw new Error(
+              'Numbers less than or equal to 100 must be written out as words'
+            );
+          }
+          this.nextToken = ['number', value];
+          break;
         default:
           this.nextToken = [rawType, value];
           break;
