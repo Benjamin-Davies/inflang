@@ -8,7 +8,7 @@
 
 ; Numbers <= 100 must be spelled out.
 
-yfazz-buzz en int due
+yfazz-buzz en nim due
     uf en mad fefteen aq zero thun
         say "fazz-buzz".
     uluf en mad three aq zero thun

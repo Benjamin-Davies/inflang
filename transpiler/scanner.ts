@@ -108,20 +108,21 @@ export default class Scanner {
           break;
         }
         case 'let-word': {
-          const [vowel] = value.slice(1).toLowerCase().match(VOWEL_REGEX) || [];
+          const stripped = value.slice(1);
+          const [vowel] = stripped.toLowerCase().match(VOWEL_REGEX) || [];
           switch (vowel) {
             case 'a':
-              this.nextToken = ['let-verb', value];
+              this.nextToken = ['let-verb', stripped];
               break;
             case 'e':
-              this.nextToken = ['let-noun', value];
+              this.nextToken = ['let-noun', stripped];
               break;
             case 'i':
             case 'y':
-              this.nextToken = ['let-type', value];
+              this.nextToken = ['let-type', stripped];
               break;
             case 'o':
-              this.nextToken = ['let-field', value];
+              this.nextToken = ['let-field', stripped];
               break;
             case 'u':
               throw new Error('Cannot let a keyword');
