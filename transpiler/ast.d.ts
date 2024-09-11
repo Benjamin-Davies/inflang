@@ -28,24 +28,17 @@ export type Else = ['Else', Program];
 /**For ::= 'fur' noun 'un' Expr 'due' Program 'dun' */
 export type For = ['For', string, Expr, Program];
 
-/**Expr ::= InnerExpr | Call */
-export type Expr = InnerExpr | Call;
-
-/**Call ::= Args verb Args */
-export type Call = ['Call', Args, string, Args];
-
-/**Args ::= [ Arg ( ',' Arg )* ] */
-export type Args = ['Args', Arg[]];
-
-/**Arg ::= SimpleCall | InnerExpr */
-export type Arg = SimpleCall | Expr;
-
-/**SimpleCall ::= verb Arg */
-export type SimpleCall = ['Call', [], string, Arg];
-
+/**Expr ::= Call | InnerExpr */
 /**InnerExpr ::= '(' Expr ')' | noun | number | string */
-export type InnerExpr =
+export type Expr =
+  | Call
   | ['Parens', Expr]
   | ['Ident', string]
   | ['Number', number]
   | ['String', string];
+
+/**Call ::= Args verb Args | Call verb Args */
+export type Call = ['Call', Args, string, Args];
+
+/**Args ::= [ InnerExpr ( ',' InnerExpr )* ] */
+export type Args = ['Args', Expr[]];

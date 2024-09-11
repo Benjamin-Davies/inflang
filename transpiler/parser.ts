@@ -2,13 +2,13 @@ import {
   ArgDecl,
   ArgDecls,
   Args,
+  Call,
   Elif,
   Else,
   Expr,
   For,
   Func,
   If,
-  InnerExpr,
   Program,
   Stmt,
   Type,
@@ -136,74 +136,63 @@ function parseFor(s: Scanner): For {
   return ['For', noun, expr, program];
 }
 
-// TODO: increase strictness around commas
 function parseExpr(s: Scanner): Expr {
-  let expr: Expr | Args | null = null;
-  loop: while (true) {
-    switch (s.peek()?.[0]) {
-      case 'verb': {
-        const [_, verb] = s.consume();
-        expr = ['Call', toArgs(expr), verb, ['Args', []]];
-        break;
-      }
-      case 'noun':
-      case 'left-paren':
-      case 'number':
-      case 'string': {
-        const innerExpr = parseInnerExpr(s);
-        expr = appendArg(expr, innerExpr);
-        break;
-      }
-      case 'comma':
-        s.consume();
-        break;
-      default:
-        break loop;
+  let preArgs: Args | null = null;
+  if (isInnerExpr(s)) {
+    preArgs = parseArgs(s);
+  }
+
+  const calls: [string, Args | null][] = [];
+  while (s.peek()?.[0] === 'verb') {
+    const [_, verb] = s.consume();
+    let args: Args | null = null;
+    if (isInnerExpr(s)) {
+      args = parseArgs(s);
     }
+    calls.push([verb, args]);
   }
 
-  return expectExpr(expr);
-}
-
-function toArgs(expr: Expr | Args | null): Args {
-  if (expr === null) {
-    return ['Args', []];
-  } else if (expr[0] === 'Args') {
-    return expr;
-  } else {
-    return ['Args', [expr]];
+  if (calls.length === 0) {
+    if (!preArgs || preArgs[1].length > 1) {
+      throw new Error('Invalid expression. Contains commas with no call.');
+    }
+    return preArgs[1][0];
   }
-}
 
-function appendArg(
-  expr: Expr | Args | null,
-  innerExpr: InnerExpr
-): Expr | Args {
-  if (expr === null) {
-    return innerExpr;
-  } else if (expr[0] === 'Args') {
-    expr[1].push(innerExpr);
-    return expr;
-  } else if (expr[0] === 'Call') {
-    const postArgs = expr[3];
-    postArgs[1].push(innerExpr);
-    return expr;
-  } else {
-    return ['Args', [expr, innerExpr]];
+  let expr: Call = [
+    'Call',
+    preArgs ?? ['Args', []],
+    calls[0][0],
+    calls[0][1] ?? ['Args', []],
+  ];
+  for (const call of calls.slice(1)) {
+    expr = ['Call', ['Args', [expr]], call[0], call[1] ?? ['Args', []]];
   }
+  return expr;
 }
 
-function expectExpr(expr: Expr | Args | null): Expr {
-  if (expr === null) {
-    throw new Error('Expected expr');
-  } else if (expr[0] === 'Args') {
-    throw new Error('Missing verb');
-  } else {
-    return expr;
+function isInnerExpr(s: Scanner): boolean {
+  switch (s.peek()?.[0]) {
+    case 'noun':
+    case 'left-paren':
+    case 'number':
+    case 'string':
+      return true;
+    default:
+      return false;
   }
 }
 
-function parseInnerExpr(s: Scanner): InnerExpr {
+function parseArgs(s: Scanner): Args {
+  const args = [parseInnerExpr(s)];
+  while (s.peek()?.[0] === 'comma') {
+    s.expect('comma');
+    args.push(parseInnerExpr(s));
+  }
+  return ['Args', args];
+}
+
+function parseInnerExpr(s: Scanner): Expr {
   switch (s.peek()?.[0]) {
     case 'noun': {
       const [_, noun] = s.consume();
