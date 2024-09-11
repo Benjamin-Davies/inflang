@@ -1,8 +1,14 @@
 /**Program ::= { Stmt } */
 export type Program = ['Program', Stmt[]];
 
-/**Stmt ::= ( Func | If | For | Expr ) '.' */
-export type Stmt = Func | If | For | Expr;
+/**Stmt ::= ( Use | Func | If | For | Expr ) '.' */
+export type Stmt = Use | Func | If | For | Expr;
+
+/**Use ::= 'use' string UseItem ( ',' UseItem )* */
+export type Use = ['Use', string, UseItem[]];
+
+/**UseItem ::= verb | noun | type */
+export type UseItem = string;
 
 /**Func ::= let-verb ArgDecls 'due' Program 'dun' */
 export type Func = ['Func', string, ArgDecls, Program];

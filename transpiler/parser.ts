@@ -12,6 +12,8 @@ import {
   Program,
   Stmt,
   Type,
+  Use,
+  UseItem,
 } from './ast';
 import Scanner from './scanner';
 
@@ -37,6 +39,9 @@ function parseStmt(s: Scanner): Stmt {
       break;
     case 'keyword':
       switch (value) {
+        case 'use':
+          stmt = parseUse(s);
+          break;
         case 'uf':
           stmt = parseIf(s);
           break;
@@ -55,6 +60,32 @@ function parseStmt(s: Scanner): Stmt {
 
   s.expect('full-stop');
   return stmt;
+}
+
+function parseUse(s: Scanner): Use {
+  s.expect('keyword', 'use');
+  const [_, path] = s.expect('string');
+
+  const items = [parseUseItem(s)];
+  while (s.peek()?.[0] === 'comma') {
+    s.consume();
+    items.push(parseUseItem(s));
+  }
+
+  return ['Use', path, items];
+}
+
+function parseUseItem(s: Scanner): UseItem {
+  const [type, value] = s.peek() || [null, null];
+  switch (type) {
+    case 'verb':
+    case 'noun':
+    case 'type':
+      s.consume();
+      return value;
+    default:
+      throw new Error(`Expected verb, noun, or type, but got ${type}`);
+  }
 }
 
 function parseFunc(s: Scanner): Func {

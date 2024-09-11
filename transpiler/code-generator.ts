@@ -10,6 +10,7 @@ import {
   Program,
   Stmt,
   Type,
+  Use,
 } from './ast';
 
 export default function generateProgram(program: Program): string {
@@ -19,6 +20,8 @@ export default function generateProgram(program: Program): string {
 
 function generateStmt(stmt: Stmt): string {
   switch (stmt[0]) {
+    case 'Use':
+      return generateUse(stmt);
     case 'Func':
       return generateFunc(stmt);
     case 'If':
@@ -26,8 +29,13 @@ function generateStmt(stmt: Stmt): string {
     case 'For':
       return generateFor(stmt);
     default:
-      return generateExpr(stmt);
+      return generateExpr(stmt) + ';';
   }
+}
+
+function generateUse(use: Use): string {
+  const [_, module, items] = use;
+  return `import { ${items.map(generateIdent).join(', ')} } from "${module}";`;
 }
 
 function generateFunc(func: Func): string {
@@ -65,7 +73,7 @@ function generateExpr(expr: Expr): string {
     case 'Call':
       return generateCall(expr);
     case 'Parens':
-      return `(${generateExpr(expr[1])})`;
+      return generateExpr(expr[1]);
     case 'Ident':
       return generateIdent(expr[1]);
     case 'Number':
@@ -148,6 +156,9 @@ function generateIdent(ident: string): string {
   if (ident in builtins) {
     return builtins[ident].toString();
   }
+  if (ident === 'nag') {
+    return '-';
+  }
 
-  return ident.replace(/-/g, '_');
+  return ident.replace(/[aeiou]/, '_').replace(/-/g, '_');
 }

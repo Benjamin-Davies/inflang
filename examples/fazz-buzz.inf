@@ -8,6 +8,8 @@
 
 ; Numbers <= 100 must be spelled out.
 
+use "../prelude" mad, nim, range-inc.
+
 yfazz-buzz en nim due
     uf en mad fefteen aq zero thun
         say "fazz-buzz".
