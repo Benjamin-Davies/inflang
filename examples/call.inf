@@ -1,0 +1,22 @@
+; neg(m)
+nag em.
+em nag.
+
+; add(m, n)
+add em, en.
+em add en.
+
+; add(m, n, o)
+add em, en, eo.
+em add en, eo.
+em, en add eo.
+em, en, eo add.
+
+; sub(add(m, n), o)
+sab (add em, en), eo.
+em add en sab eo.
+
+; sub(neg(n), m)
+sab (nag en), em.
+nag en sab em.
+en nag sab em.
