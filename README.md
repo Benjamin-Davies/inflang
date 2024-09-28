@@ -19,4 +19,4 @@ npx ts-node examples/fazz-buzz.ts
 
 ## Syntax
 
-See [examples/fazz-buzz.inf] for a brief overview of the syntax.
+See [examples/fazz-buzz.inf](https://github.com/Benjamin-Davies/inflang/blob/main/examples/fazz-buzz.inf) for a brief overview of the syntax.
